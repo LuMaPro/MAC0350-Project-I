@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ironia do Medo</title>
+    <link rel="shortcut icon" href="/static/img/ironia_main.png" type="image/x-icon">
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="static/scripts.js" defer></script>
+</head>
+<body>
+    <div class="center-image">
+        <img src="/static/img/ironia_main.png" alt="">
+    </div>
+
+    <header>
+        <div class="character-icon"></div>
+        <ul id="character-info">
+            <li>PERSONAGEM: <input id="character_name" type="text" value="Washi"></li>
+            <li>JOGADOR: <input id="player_name" type="text" value="Thiago"></li>
+            <li>ORIGEM: <input id="character_origin" type="text" value="Humano"></li>
+            <li>CLASSE: <input id="character_class" type="text" value="Espadachim"></li>
+        </ul>
+        <button id="save-character"></button>
+    </header>
+
+    <main>
+        <div class="character-sheet">
+            <img id="attributes" src="/static/img/attributes.png" alt="">
+            <div class="main-attributes">
+                <input id="agility" type="text" value="0">
+                <input id="strength" type="text" value="0">
+                <input id="intelligence" type="text" value="0">
+                <input id="presence" type="text" value="0">
+                <input id="vigor" type="text" value="0">
+            </div>
+
+            <h2 id="health">SAÚDE</h2>
+            <img id="health-image" src="/static/img/health.png" alt="">
+            <div class="health-attributes">
+                <input id="pv" type="text" value="0">
+                <input id="san" type="text" value="0">
+                <input id="pe" type="text" value="0">
+            </div>
+            <h2 id="defense">DEFESA</h2>
+            <img id="defense-image" src="/static/img/defense.png" alt="">
+            <div class="defense-attributes">
+                <input id="pas" type="text" value="0">
+                <input id="blo" type="text" value="0">
+                <input id="esq" type="text" value="0">
+            </div>
+        </div>
+
+        <div class="skills">
+            <h2>PERÍCIAS</h2>
+            <div class="skills-table">
+                <ul id="skills-list">
+                    <li>ATLETISMO</li>
+                    <li>ATUALIDADES</li>
+                    <li>CIÊNCIA</li>
+                    <li>DIPLOMACIA</li>
+                    <li>ENGANAÇÃO</li>
+                    <li>FORTITUDE</li>
+                    <li>FURTIVIDADE</li>
+                    <li>ILUSIONISMO</li>
+                    <li>INTIMIDAÇÃO</li>
+                    <li>INTUIÇÃO</li>
+                    <li>INVESTIGAÇÃO</li>
+                    <li>LUTA</li>
+                    <li>MEDICINA</li>
+                    <li>OCULTISMO</li>
+                    <li>PERCEPÇÃO</li>
+                    <li>PILOTAGEM</li>
+                    <li>PONTARIA</li>
+                    <li>PROFISSÃO</li>
+                    <li>REFLEXOS</li>
+                    <li>RELIGIÃO</li>
+                    <li>TÁTICA</li>
+                    <li>TECNOLOGIA</li>
+                    <li>VONTADE</li>
+                </ul>
+    
+                <ul class="skills-values">
+                    <li><input id="atl" type="text" value="0"></li>
+                    <li><input id="atu" type="text" value="0"></li>
+                    <li><input id="cie" type="text" value="0"></li>
+                    <li><input id="dip" type="text" value="0"></li>
+                    <li><input id="eng" type="text" value="0"></li>
+                    <li><input id="for" type="text" value="0"></li>
+                    <li><input id="fur" type="text" value="0"></li>
+                    <li><input id="ilu" type="text" value="0"></li>
+                    <li><input id="inti" type="text" value="0"></li>
+                    <li><input id="intu" type="text" value="0"></li>
+                    <li><input id="inv" type="text" value="0"></li>
+                    <li><input id="lut" type="text" value="0"></li>
+                    <li><input id="med" type="text" value="0"></li>
+                    <li><input id="ocu" type="text" value="0"></li>
+                    <li><input id="per" type="text" value="0"></li>
+                    <li><input id="pil" type="text" value="0"></li>
+                    <li><input id="pon" type="text" value="0"></li>
+                    <li><input id="pro" type="text" value="0"></li>
+                    <li><input id="ref" type="text" value="0"></li>
+                    <li><input id="rel" type="text" value="0"></li>
+                    <li><input id="tat" type="text" value="0"></li>
+                    <li><input id="tec" type="text" value="0"></li>
+                    <li><input id="von" type="text" value="0"></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="abilities">
+            <h2>HABILIDADES</h2>
+            <ul id="ability-list">
+                <li><button id="add-ability"></button></li>
+            </ul>
+            <div class="items">
+                <h2>OBJETOS</h2>
+                <ul id="item-list">
+                    <li><button id="add-item"></button></li>
+                    <div class="item-header">
+                        <div class="item">
+                            <span>ITEM</span>
+                        </div>
+                        <div class="description">
+                            <span>DESCRIÇÃO</span>
+                        </div>
+                        <div class="amount">
+                            <span>NÚMERO</span>
+                        </div>
+                        <div class="delete-item">
+                            <span id="ocult">.</span>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+</body>
+</html>
