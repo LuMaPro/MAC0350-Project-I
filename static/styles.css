@@ -256,6 +256,7 @@ header input{
     height: 50px;
 }
 
+#delete-character,
 .abilities button{
     height: 25px;
     width: 25px;
@@ -298,6 +299,7 @@ header input{
     background-size: cover;
 }
 
+#delete-character,
 .remove{
     background-color: #fd8686;
     margin-left: 10px;
