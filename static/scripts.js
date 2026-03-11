@@ -54,6 +54,8 @@ const skillsArr = [atl,atu,cie,dip,eng,fort,fur,ilu,inti,intu,inv,lut,med,ocu,pe
 // Variável botões
 const addItem = document.querySelector("#add-item");
 const addAbility = document.querySelector("#add-ability");
+const saveChar = document.getElementById('save-character');
+const deleteChar = document.getElementById('delete-character')
 
 // Variável abilities
 let abilities = [];
@@ -445,6 +447,171 @@ function loadItems(){
         })
     }
 }
+
+saveChar.addEventListener('click', async () => {
+    const charName = document.getElementById('character_name').value;
+    const playName = document.getElementById('player_name').value;
+    const charOrig = document.getElementById('character_origin').value;
+    const charClas = document.getElementById('character_class').value;
+
+    const agility = parseInt(document.getElementById('agility').value);
+    const strength = parseInt(document.getElementById('strength').value);
+    const intelligence = parseInt(document.getElementById('intelligence').value);
+    const presence = parseInt(document.getElementById('presence').value);
+    const vigor = parseInt(document.getElementById('vigor').value);
+
+    const pv = document.getElementById('pv').value;
+    const san = document.getElementById('san').value;
+    const pe = document.getElementById('pe').value;
+
+    const pas = parseInt(document.getElementById('pas').value);
+    const blo = parseInt(document.getElementById('blo').value);
+    const esq = parseInt(document.getElementById('esq').value);
+
+    const atl = parseInt(document.getElementById('atl').value);
+    const atu = parseInt(document.getElementById('atu').value);
+    const cie = parseInt(document.getElementById('cie').value);
+    const dip = parseInt(document.getElementById('dip').value);
+    const eng = parseInt(document.getElementById('eng').value);
+    const fort = parseInt(document.getElementById('for').value);
+    const fur = parseInt(document.getElementById('fur').value);
+    const ilu = parseInt(document.getElementById('ilu').value);
+    const inti = parseInt(document.getElementById('inti').value);
+    const intu = parseInt(document.getElementById('intu').value);
+    const inv = parseInt(document.getElementById('inv').value);
+    const lut = parseInt(document.getElementById('lut').value);
+    const med = parseInt(document.getElementById('med').value);
+    const ocu = parseInt(document.getElementById('ocu').value);
+    const per = parseInt(document.getElementById('per').value);
+    const pil = parseInt(document.getElementById('pil').value);
+    const pon = parseInt(document.getElementById('pon').value);
+    const pro = parseInt(document.getElementById('pro').value);
+    const ref = parseInt(document.getElementById('ref').value);
+    const rel = parseInt(document.getElementById('rel').value);
+    const tat = parseInt(document.getElementById('tat').value);
+    const tec = parseInt(document.getElementById('tec').value);
+    const von = parseInt(document.getElementById('von').value);
+
+    const local_abilities = JSON.parse(localStorage.getItem("abilities") || "[]");
+    let abilities = [];
+
+    local_abilities.forEach((ability) => {
+        abilities.push({
+            ability_name: ability.name,
+            description: ability.input1,
+            damage: ability.input2,
+            effect: ability.input3
+        })
+    })
+
+    const local_items = JSON.parse(localStorage.getItem("items") || "[]");
+    let items = [];
+
+    local_items.forEach((item) => {
+        items.push({
+            item_name: item.input,
+            description: item.description,
+            amount: item.amount
+        })
+    })
+
+    const character = {
+        character_info: {
+            character_name: charName,
+            player_name: playName,
+            character_origin: charOrig,
+            character_class: charClas
+        },
+        main_attributes: {
+            agility: agility,
+            strength: strength,
+            intelligence: intelligence,
+            presence: presence,
+            vigor: vigor
+        },
+        health_attributes: {
+            pv: pv,
+            san: san,
+            pe: pe
+        },
+        defense_attributes: {
+            pas: pas,
+            blo: blo,
+            esq: esq
+        },
+        skills_values: {
+            atl: atl,
+            atu: atu,
+            cie: cie,
+            dip: dip,
+            eng: eng,
+            fort: fort,
+            fur: fur,
+            ilu: ilu,
+            inti: inti,
+            intu: intu,
+            inv: inv,
+            lut: lut,
+            med: med,
+            ocu: ocu,
+            per: per,
+            pil: pil,
+            pon: pon,
+            pro: pro,
+            ref: ref,
+            rel: rel,
+            tat: tat,
+            tec: tec,
+            von: von
+        },
+        abilities_list: abilities,
+        items_list: items
+    };
+
+    try {
+        const response = await fetch('/characters/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(character)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert('Personagem salvo com sucesso!');
+            console.log(data);
+        } else {
+            const errorData = await response.json();
+            console.error('Erro na validação do Pydantic:', errorData);
+            alert('Erro ao salvar. Verifique o console para ver o que faltou.');
+        }
+    } catch (error) {
+        console.error('Erro de conexão:', error);
+    }
+});
+
+deleteChar.addEventListener("click", async () => {
+    const charName = document.getElementById('character_name').value;
+
+    try {
+        const response = await fetch(`/characters/${charName}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert('Personagem removido!');
+            console.log(data);
+        } else {
+            const errorData = await response.json();
+            console.error('Erro na validação do Pydantic:', errorData);
+            alert('Erro ao remover. Verifique o console para ver o que faltou.');
+        }
+    } catch (error) {
+        console.error('Erro de conexão:', error);
+    }
+})
 
 function loadLocal(){
     loadHeader();
