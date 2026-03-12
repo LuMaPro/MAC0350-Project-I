@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Response, Cookie, Depends, HTTPException, status
+from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
@@ -92,34 +92,37 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+templates = Jinja2Templates(directory="templates")
+
 save_path = "characters.json"
 
 characters = load_characters(save_path)
 
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    return FileResponse("templates/index.html")
+@app.get("/")
+def root(request: Request):
+    return templates.TemplateResponse(request=request, name="prev.html")
 
-@app.get("/characters/")
-async def get_characters():
-    return characters
+@app.get("/characters")
+def get_characters(request: Request):
+    return templates.TemplateResponse(request=request, name="index.html")
 
-@app.post("/characters/")
+@app.post("/characters")
 async def post_characters(character: Character):
     for i, char in enumerate(characters):
         if char.character_info.character_name == character.character_info.character_name:
             characters[i] = character 
             save_characters(save_path,characters)
-            return character
+            return {"characters" : characters}
             
     characters.append(character)
     save_characters(save_path,characters)
-    return character
+    return {"characters" : characters}
 
 @app.delete("/characters/{character_name}")
 async def delete_character(character_name: str):
     for i, char in enumerate(characters):
         if char.character_info.character_name == character_name:
-            personagem_removido = characters.pop(i)
+            characters.pop(i)
             save_characters(save_path,characters)
-            return {"mensagem": f"Personagem '{character_name}' deletado com sucesso!"}
+            return {"message": f"Personagem {character_name} removido com sucesso!"}
+    return {"message": f"Personagem {character_name} não encontrado."}
