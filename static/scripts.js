@@ -55,7 +55,8 @@ const skillsArr = [atl,atu,cie,dip,eng,fort,fur,ilu,inti,intu,inv,lut,med,ocu,pe
 const addItem = document.querySelector("#add-item");
 const addAbility = document.querySelector("#add-ability");
 const saveChar = document.getElementById('save-character');
-const deleteChar = document.getElementById('delete-character')
+const deleteChar = document.getElementById('delete-character');
+const goBack = document.getElementById('back-to-prev')
 
 // Variável abilities
 let abilities = [];
@@ -448,6 +449,10 @@ function loadItems(){
     }
 }
 
+goBack.addEventListener("click", () => {
+    window.location.href = "/";
+})
+
 saveChar.addEventListener('click', async () => {
     const charName = document.getElementById('character_name').value;
     const playName = document.getElementById('player_name').value;
@@ -569,7 +574,7 @@ saveChar.addEventListener('click', async () => {
     };
 
     try {
-        const response = await fetch('/characters/', {
+        const response = await fetch('/characters', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -601,8 +606,7 @@ deleteChar.addEventListener("click", async () => {
 
         if (response.ok) {
             const data = await response.json();
-            alert('Personagem removido!');
-            console.log(data);
+            alert(data.message)
         } else {
             const errorData = await response.json();
             console.error('Erro na validação do Pydantic:', errorData);
