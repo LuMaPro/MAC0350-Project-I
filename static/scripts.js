@@ -1,3 +1,73 @@
+const inputIds = [
+    'character_name', 'player_name', 'character_origin', 'character_class',
+    'agility', 'strength', 'intelligence', 'presence', 'vigor',
+    'pv', 'san', 'pe', 'pas', 'blo', 'esq',
+    'atl', 'atu', 'cie', 'dip', 'eng', 'for', 'fur', 'ilu', 'inti', 'intu', 
+    'inv', 'lut', 'med', 'ocu', 'per', 'pil', 'pon', 'pro', 'ref', 'rel', 'tat', 'tec', 'von'
+];
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const charToLoad = localStorage.getItem("characterToLoad");
+
+    if (charToLoad) {
+        try {
+            const response = await fetch(`/api/characters/${charToLoad}`);
+            if (response.ok) {
+                const data = await response.json();
+
+                const abilities = (data.abilities_list || []).map(ab => ({
+                    name: ab.ability_name,
+                    input1: ab.description,
+                    input2: ab.damage,
+                    input3: ab.effect
+                }));
+                localStorage.setItem("abilities", JSON.stringify(abilities));
+
+                const items = (data.items_list || []).map(it => ({
+                    input: it.item_name,
+                    description: it.description,
+                    amount: it.amount
+                }));
+                localStorage.setItem("items", JSON.stringify(items));
+
+                const draft = {};
+                inputIds.forEach(id => {
+                    const dbKey = (id === 'for') ? 'fort' : id;
+                    draft[id] = data[dbKey] !== undefined ? data[dbKey] : '';
+                });
+                localStorage.setItem("characterDraft", JSON.stringify(draft));
+
+                localStorage.removeItem("characterToLoad");
+
+                window.location.reload();
+                return; 
+            }
+        } catch (error) {
+            console.error("Erro ao tentar ler os dados do banco:", error);
+            alert("Houve um erro ao carregar o personagem. Verifique o console.");
+            return; 
+        }
+    }
+
+    const savedDraft = JSON.parse(localStorage.getItem("characterDraft") || "{}");
+    
+    inputIds.forEach(id => {
+        const input = document.getElementById(id);
+        if (input && savedDraft[id] !== undefined) {
+            input.value = savedDraft[id];
+        }
+        
+        if (input) {
+            input.addEventListener("input", () => {
+                const currentDraft = JSON.parse(localStorage.getItem("characterDraft") || "{}");
+                currentDraft[id] = input.value;
+                localStorage.setItem("characterDraft", JSON.stringify(currentDraft));
+            });
+        }
+    });
+
+});
+
 // Variáveis header
 const character = document.querySelector("#character_name");
 const player = document.querySelector("#player_name");
@@ -521,54 +591,49 @@ saveChar.addEventListener('click', async () => {
     })
 
     const character = {
-        character_info: {
-            character_name: charName,
-            player_name: playName,
-            character_origin: charOrig,
-            character_class: charClas
-        },
-        main_attributes: {
-            agility: agility,
-            strength: strength,
-            intelligence: intelligence,
-            presence: presence,
-            vigor: vigor
-        },
-        health_attributes: {
-            pv: pv,
-            san: san,
-            pe: pe
-        },
-        defense_attributes: {
-            pas: pas,
-            blo: blo,
-            esq: esq
-        },
-        skills_values: {
-            atl: atl,
-            atu: atu,
-            cie: cie,
-            dip: dip,
-            eng: eng,
-            fort: fort,
-            fur: fur,
-            ilu: ilu,
-            inti: inti,
-            intu: intu,
-            inv: inv,
-            lut: lut,
-            med: med,
-            ocu: ocu,
-            per: per,
-            pil: pil,
-            pon: pon,
-            pro: pro,
-            ref: ref,
-            rel: rel,
-            tat: tat,
-            tec: tec,
-            von: von
-        },
+        character_name: charName,
+        player_name: playName,
+        character_origin: charOrig,
+        character_class: charClas,
+        
+        agility: agility,
+        strength: strength,
+        intelligence: intelligence,
+        presence: presence,
+        vigor: vigor,
+        
+        pv: pv,
+        san: san,
+        pe: pe,
+        
+        pas: pas,
+        blo: blo,
+        esq: esq,
+        
+        atl: atl,
+        atu: atu,
+        cie: cie,
+        dip: dip,
+        eng: eng,
+        fort: fort,
+        fur: fur,
+        ilu: ilu,
+        inti: inti,
+        intu: intu,
+        inv: inv,
+        lut: lut,
+        med: med,
+        ocu: ocu,
+        per: per,
+        pil: pil,
+        pon: pon,
+        pro: pro,
+        ref: ref,
+        rel: rel,
+        tat: tat,
+        tec: tec,
+        von: von,
+
         abilities_list: abilities,
         items_list: items
     };
@@ -606,16 +671,21 @@ deleteChar.addEventListener("click", async () => {
 
         if (response.ok) {
             const data = await response.json();
-            alert(data.message)
+            alert(data.message);
         } else {
             const errorData = await response.json();
-            console.error('Erro na validação do Pydantic:', errorData);
-            alert('Erro ao remover. Verifique o console para ver o que faltou.');
+            console.error('Erro na requisição:', errorData);
+            
+            if (errorData.detail) {
+                alert(errorData.detail);
+            } else {
+                alert('Erro ao remover. Verifique o console.');
+            }
         }
     } catch (error) {
         console.error('Erro de conexão:', error);
     }
-})
+});
 
 function loadLocal(){
     loadHeader();
