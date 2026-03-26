@@ -7,6 +7,7 @@
     <link rel="shortcut icon" href="static/img/ironia_main.png" type="image/x-icon">
     <link rel="stylesheet" href="static/prev_styles.css">
     <script src="static/prev_scripts.js" defer></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
 
@@ -26,7 +27,11 @@
             <div id="main-menu" class="card-body">
                 <div class="load-section">
                     <span class="load-text">Carregar personagem</span>
-                    <button id="load-button"></button>
+                    <button id="load-button" 
+                            hx-get="/partials/characters" 
+                            hx-target="#character-list" 
+                            hx-trigger="click">
+                    </button>
                 </div>
                 <div class="footer-section">
                     <button id="continue-button">Continuar</button>
@@ -35,8 +40,23 @@
 
             <div id="load-menu" class="card-body hidden">
                 <h2 style="color: #313131; text-transform: uppercase;">Personagens</h2>
+                
+                <form onsubmit="event.preventDefault();" style="width: 100%;">
+                    
+                    <input class="search-input" 
+                           type="search" 
+                           name="q" 
+                           placeholder="Buscar personagem (ex: Washi)..." 
+                           autocomplete="off"
+                           hx-get="/partials/characters" 
+                           hx-trigger="input changed delay:300ms, search" 
+                           hx-target="#character-list"
+                           hx-swap="innerHTML">
+                </form>
+                
                 <ul id="character-list" class="character-list">
                     </ul>
+                
                 <div class="footer-section">
                     <button id="back-button" class="back-btn">Voltar</button>
                 </div>
