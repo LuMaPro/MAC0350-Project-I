@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from typing import Optional, List
@@ -99,61 +100,32 @@ def root(request: Request):
 def get_characters(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
-@app.post("/characters")
-async def post_characters(character_data: dict):
+@app.post("/characters", response_class=HTMLResponse)
+async def create_character(character_data: dict):
     with Session(engine) as session:
         char_name = character_data.get("character_name")
-        if not char_name:
-            raise HTTPException(status_code=400, detail="Nome do personagem é obrigatório")
+        if session.exec(select(Character).where(Character.character_name == char_name)).first():
+            return "<div style='color:red;'>Personagem já existe. Use Atualizar.</div>"
 
         abilities_data = character_data.pop("abilities_list", [])
         items_data = character_data.pop("items_list", [])
-
-        query = select(Character).where(Character.character_name == char_name)
-        db_character = session.exec(query).first()
-
-        if db_character:
-            for key, value in character_data.items():
-                if hasattr(db_character, key):
-                    setattr(db_character, key, value)
+        
+        new_char = Character(**character_data)
+        for ab in abilities_data: new_char.abilities_list.append(Ability(**ab))
+        for it in items_data: new_char.items_list.append(Item(**it))
             
-            db_character.abilities_list.clear()
-            db_character.items_list.clear()
-            
-            for ab in abilities_data:
-                db_character.abilities_list.append(Ability(**ab))
-            for it in items_data:
-                db_character.items_list.append(Item(**it))
-                
-            session.add(db_character)
-            mensagem = "atualizado"
-            
-        else:
-            new_char = Character(**character_data)
-            
-            for ab in abilities_data:
-                new_char.abilities_list.append(Ability(**ab))
-            for it in items_data:
-                new_char.items_list.append(Item(**it))
-                
-            session.add(new_char)
-            mensagem = "criado"
-
+        session.add(new_char)
         session.commit()
-        return {"message": f"Personagem {mensagem} com sucesso!"}
+        return "<div style='color:green; font-weight:bold;'>Criado com sucesso!</div>"
 
-@app.delete("/characters/{character_name}")
+@app.delete("/characters/{character_name}", response_class=HTMLResponse)
 async def delete_character(character_name: str):
     with Session(engine) as session:
-        query = select(Character).where(Character.character_name == character_name)
-        db_character = session.exec(query).first()
-
-        if not db_character:
-            raise HTTPException(status_code=404, detail=f"Personagem {character_name} não encontrado.")
-
-        session.delete(db_character)
-        session.commit()
-        return {"message": f"Personagem {character_name} removido com sucesso!"}
+        db_character = session.exec(select(Character).where(Character.character_name == character_name)).first()
+        if db_character:
+            session.delete(db_character)
+            session.commit()
+        return ""
 
 @app.get("/api/characters")
 def get_all_characters():
@@ -175,3 +147,56 @@ def get_single_character(character_name: str):
         char_data["items_list"] = [it.model_dump() for it in db_character.items_list]
         
         return char_data
+
+@app.put("/characters", response_class=HTMLResponse)
+async def update_character(character_data: dict):
+    with Session(engine) as session:
+        char_name = character_data.get("character_name")
+        db_character = session.exec(select(Character).where(Character.character_name == char_name)).first()
+        
+        if not db_character:
+            return "<div style='color:red;'>Personagem não encontrado. Crie primeiro.</div>"
+
+        abilities_data = character_data.pop("abilities_list", [])
+        items_data = character_data.pop("items_list", [])
+        
+        for key, value in character_data.items():
+            if hasattr(db_character, key):
+                setattr(db_character, key, value)
+        
+        db_character.abilities_list.clear()
+        db_character.items_list.clear()
+        for ab in abilities_data: db_character.abilities_list.append(Ability(**ab))
+        for it in items_data: db_character.items_list.append(Item(**it))
+            
+        session.add(db_character)
+        session.commit()
+        return "<div style='color:blue; font-weight:bold;'>Atualizado com sucesso!</div>"
+
+@app.get("/partials/characters", response_class=HTMLResponse)
+def get_characters_partial(q: str | None = None):
+    with Session(engine) as session:
+        if q:
+            query = select(Character).where(Character.character_name.ilike(f"%{q}%"))
+            characters = session.exec(query).all()
+        else:
+            characters = session.exec(select(Character)).all()
+
+        if not characters:
+            return "<p style='text-align: center; color: #313131; padding: 10px;'>Nenhum personagem encontrado com esse nome.</p>"
+
+        html = ""
+        for char in characters:
+            html += f"""
+            <li class="character-item">
+                <span class="character-name">{char.character_name}</span>
+                <div>
+                    <button class="select-btn" onclick="selecionarPersonagem('{char.character_name}')">Carregar</button>
+                    <button style="background-color: #ff4d4d; color: white; border: 2px solid #313131; border-radius: 5px; cursor: pointer; padding: 5px 10px; margin-left: 5px;"
+                            hx-delete="/characters/{char.character_name}"
+                            hx-target="closest li"
+                            hx-swap="outerHTML">Excluir</button>
+                </div>
+            </li>
+            """
+        return html
