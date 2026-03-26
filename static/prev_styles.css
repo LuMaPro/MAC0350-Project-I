@@ -183,7 +183,7 @@ body, html {
 .character-list {
     list-style: none;
     width: 100%;
-    max-height: 200px; /* Cria uma barra de rolagem se houver muitos personagens */
+    max-height: 200px;
     overflow-y: auto;
     padding-right: 5px;
 }
@@ -234,5 +234,22 @@ body, html {
 
 .back-btn:hover {
     background-color: #e05555;
+    transition: 0.3s;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #313131;
+    border-radius: 8px;
+    font-size: 18px;
+    outline: none;
+    background-color: #f9f9f9;
+}
+
+.search-input:focus {
+    border-color: #5672ff;
+    background-color: #ffffff;
     transition: 0.3s;
 }
