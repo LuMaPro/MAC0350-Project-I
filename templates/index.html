@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ironia do Medo</title>
-    <link rel="shortcut icon" href="/static/img/ironia_main.png" type="image/x-icon">
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="shortcut icon" href="static/img/ironia_main.png" type="image/x-icon">
+    <link rel="stylesheet" href="static/styles.css">
     <script src="static/scripts.js" defer></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
 </head>
 <body>
     <div class="center-image">
-        <img src="/static/img/ironia_main.png" alt="">
+        <img src="static/img/ironia_main.png" alt="">
     </div>
 
     <header>
@@ -21,34 +23,57 @@
             <li>ORIGEM: <input id="character_origin" type="text" value="Humano"></li>
             <li>CLASSE: <input id="character_class" type="text" value="Espadachim"></li>
         </ul>
-        <button id="save-character"></button>
-        <button id="delete-character"></button>
+        <div class="header-buttons" hx-ext="json-enc">
+            
+            <div id="save-status" style="margin-right: 15px; font-weight: bold; font-size: 18px;"></div>
+            
+            <button id="create-character" 
+                    hx-post="/characters" 
+                    hx-vals='js:{...montarPayloadPersonagem()}' 
+                    hx-target="#save-status"
+                    style="background-color: #99e7ee; font-weight: bold; border: 2px solid #313131; border-radius: 5px; cursor: pointer; padding: 5px 10px;">
+                Criar Novo
+            </button>
+
+            <button id="update-character" 
+                    hx-put="/characters" 
+                    hx-vals='js:{...montarPayloadPersonagem()}' 
+                    hx-target="#save-status"
+                    style="background-color: #5672ff; color: white; font-weight: bold; border: 2px solid #313131; border-radius: 5px; cursor: pointer; padding: 5px 10px;">
+                Atualizar
+            </button>
+
+            <button id="delete-character"></button>
+            <button id="back-to-prev"></button>
+        </div>
     </header>
 
     <main>
-        <div class="character-sheet">
-            <img id="attributes" src="/static/img/attributes.png" alt="">
-            <div class="main-attributes">
-                <input id="agility" type="text" value="0">
-                <input id="strength" type="text" value="0">
-                <input id="intelligence" type="text" value="0">
-                <input id="presence" type="text" value="0">
-                <input id="vigor" type="text" value="0">
-            </div>
+        <div class="character-sheet-wrapper">
+            <div class="character-sheet">
+                <img id="attributes" src="static/img/attributes.png" alt="">
+                <div class="main-attributes">
+                    <input id="agility" type="text" value="0">
+                    <input id="strength" type="text" value="0">
+                    <input id="intelligence" type="text" value="0">
+                    <input id="presence" type="text" value="0">
+                    <input id="vigor" type="text" value="0">
+                </div>
 
-            <h2 id="health">SAÚDE</h2>
-            <img id="health-image" src="/static/img/health.png" alt="">
-            <div class="health-attributes">
-                <input id="pv" type="text" value="0">
-                <input id="san" type="text" value="0">
-                <input id="pe" type="text" value="0">
-            </div>
-            <h2 id="defense">DEFESA</h2>
-            <img id="defense-image" src="/static/img/defense.png" alt="">
-            <div class="defense-attributes">
-                <input id="pas" type="text" value="0">
-                <input id="blo" type="text" value="0">
-                <input id="esq" type="text" value="0">
+                <h2 id="health">SAÚDE</h2>
+                <img id="health-image" src="static/img/health.png" alt="">
+                <div class="health-attributes">
+                    <input id="pv" type="text" value="0">
+                    <input id="san" type="text" value="0">
+                    <input id="pe" type="text" value="0">
+                </div>
+                <h2 id="defense">DEFESA</h2>
+                <img id="defense-image" src="static/img/defense.png" alt="">
+                <div class="defense-attributes">
+                    <input id="pas" type="text" value="0">
+                    <input id="blo" type="text" value="0">
+                    <input id="esq" type="text" value="0">
+                </div>
             </div>
         </div>
 
