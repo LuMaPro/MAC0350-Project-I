@@ -24,11 +24,35 @@ Create your own character with unique abilities and items. This character sheet 
 
 ## ⚙️ How to run
 
-This project doesn't require installation or a server.  
-To run it:
+This project runs on a FastAPI backend and requires a Python environment to work locally. Follow these steps to set it up:
 
-1. Download or clone the repository.
-2. Open the `index.html` file in any web browser.
+**1. Clone or download the repository, then open your terminal in the project folder.**
+
+**2. Create and activate a virtual environment:**
+
+For **Linux/macOS**:
+> ```bash
+> python3 -m venv --without-pip .venv
+> source .venv/bin/activate
+> ```
+
+For **Windows**:
+> ```powershell
+> python3 -m venv --without-pip .venv
+> .venv\Scripts\Activate.ps1
+> ```
+
+**3. Install dependencies and run the application:**
+
+> ```bash
+> wget [https://bootstrap.pypa.io/get-pip.py](https://bootstrap.pypa.io/get-pip.py) && python3 get-pip.py
+> touch requirements.txt
+> echo "fastapi[standard]" > requirements.txt
+> pip install -r requirements.txt
+> fastapi dev
+> ```
+
+Once the server is running, open your web browser and go to `http://127.0.0.1:8000` to access the application!
 
 ## 👤 Author
 
